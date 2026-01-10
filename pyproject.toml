@@ -13,7 +13,12 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff (>=0.14.11,<0.15.0)"]
+dev = [
+    "ruff (>=0.14.11,<0.15.0)",
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-django (>=4.11.1,<5.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)",
+]
 
 
 [build-system]
@@ -60,3 +65,9 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "lf"
 docstring-code-format = false
+
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "-ra -q"
