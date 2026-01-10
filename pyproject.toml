@@ -1,0 +1,62 @@
+[project]
+name = "donation-api"
+version = "0.1.0"
+description = "Rest API for Donation App."
+authors = [
+    { name = "Kumar Swaraj", email = "123369109+kumar-swaraj@users.noreply.github.com" },
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "django (>=6.0.1,<7.0.0)",
+    "djangorestframework (>=3.16.1,<4.0.0)",
+]
+
+[dependency-groups]
+dev = ["ruff (>=0.14.11,<0.15.0)"]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "B",
+    "C",
+    "DTZ",
+    "DJ",
+    "EM",
+    "FIX",
+    "ICN",
+    "T20",
+    "SLF",
+    "SIM",
+    "TID",
+    "I",
+    "C90",
+    "N",
+    "PERF",
+    "E",
+    "W",
+    "F",
+]
+# ignore = []
+exclude = ["manage.py"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"
+docstring-code-format = false
