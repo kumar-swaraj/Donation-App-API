@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:18.1-alpine3.22
+    environment:
+      POSTGRES_DB: devdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: supersecretpassword
+    volumes:
+      - dev-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devuser -d devdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/app/config:delegated
+    environment:
+      DB_HOST: db
+      DB_NAME: devdb
+      DB_USER: devuser
+      DB_PASSWORD: supersecretpassword
+      DEBUG: "1"
+      RUN_MIGRATIONS: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  dev-db-data:

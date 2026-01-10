@@ -1,0 +1,16 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.env
+.sqlite3
+.DS_Store
+.coverage
+.pre-commit-config.yaml
+.dockerignore
+Dockerfile
+docker-compose.yml
+README.md
