@@ -18,6 +18,7 @@ dev = [
     "pytest (>=9.0.2,<10.0.0)",
     "pytest-django (>=4.11.1,<5.0.0)",
     "pytest-cov (>=7.0.0,<8.0.0)",
+    "pre-commit (>=4.5.1,<5.0.0)",
 ]
 
 
@@ -32,6 +33,7 @@ package-mode = false
 [tool.ruff]
 line-length = 88
 indent-width = 4
+exclude = [".git", ".venv", "__pycache__", "**/migrations/**", "manage.py"]
 
 target-version = "py314"
 
@@ -55,9 +57,9 @@ select = [
     "E",
     "W",
     "F",
+    "UP",
 ]
 # ignore = []
-exclude = ["manage.py"]
 
 [tool.ruff.format]
 quote-style = "single"
