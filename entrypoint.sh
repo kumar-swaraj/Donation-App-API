@@ -1,8 +1,11 @@
 #!/bin/sh
 set -e
 
-echo "🔄 Waiting for PostgreSQL to become available..."
+echo "🔧 Fixing media directory permissions..."
+mkdir -p /app/media
+chown -R django-user:django /app/media
 
+echo "🔄 Waiting for PostgreSQL to become available..."
 until python - <<EOF
 import os
 import psycopg
@@ -21,9 +24,6 @@ done
 
 echo "✅ Database is ready"
 
-# ----------------------------------------
-# Optional migrations
-# ----------------------------------------
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
   echo "📦 Running migrations"
   python manage.py migrate --noinput
@@ -32,4 +32,4 @@ else
 fi
 
 echo "🚀 Starting application"
-exec "$@"
+exec su django-user -s /bin/sh -c "$*"
