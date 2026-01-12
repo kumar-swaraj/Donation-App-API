@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'import_export',
     'rest_framework',
+    'rest_framework_simplejwt',
     'accounts.apps.AccountsConfig',
     'donations.apps.DonationsConfig',
 ]
@@ -134,4 +135,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # djangorestframework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
