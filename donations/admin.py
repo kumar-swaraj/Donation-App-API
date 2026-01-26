@@ -20,7 +20,15 @@ class DonationAdmin(ImportExportModelAdmin):
     list_display = ['id', 'title', 'created_at', 'is_active']
     list_filter = ['categories', 'created_at']
     search_fields = ['title']
-    fields = ['id', 'title', 'categories', 'amount', 'image', 'is_active']
+    fields = [
+        'id',
+        'title',
+        'description',
+        'categories',
+        'amount',
+        'image',
+        'is_active',
+    ]
     readonly_fields = ['id', 'created_at', 'updated_at']
     ordering = ['-id']
     date_hierarchy = 'created_at'

@@ -18,6 +18,7 @@ class DonationWithoutCategorySerializer(ModelSerializer):
         fields = [
             'id',
             'title',
+            'description',
             'amount',
             'image',
             'is_active',
