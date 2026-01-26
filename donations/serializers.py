@@ -42,7 +42,7 @@ class CategoryWithDonationSerializer(CategorySerializer):
 
 
 class DonationSerializer(DonationWithoutCategorySerializer):
-    category = CategorySerializer(read_only=True)
+    categories = CategorySerializer(many=True, read_only=True)
 
     class Meta(DonationWithoutCategorySerializer.Meta):
-        fields = DonationWithoutCategorySerializer.Meta.fields + ['category']
+        fields = DonationWithoutCategorySerializer.Meta.fields + ['categories']

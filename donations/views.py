@@ -17,7 +17,7 @@ def health_check(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def categories(request):
-    categories = Category.objects.prefetch_related('donations')
+    categories = Category.objects.prefetch_related('donations').order_by('id')
     serializer = CategoryWithDonationSerializer(
         categories, many=True, context={'request': request}
     )
@@ -27,8 +27,9 @@ def categories(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def donation(request, pk):
-    # donation = Donation.objects.select_related('category').get(id=pk)
-    donation = get_object_or_404(Donation.objects.select_related('category'), id=pk)
+    donation = get_object_or_404(
+        Donation.objects.prefetch_related('categories').order_by('id'), id=pk
+    )
 
     serializer = DonationSerializer(donation, many=False, context={'request': request})
     return Response(serializer.data, status.HTTP_200_OK)

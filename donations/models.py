@@ -13,7 +13,7 @@ class TimeStampedModel(models.Model):
 
 
 class Category(TimeStampedModel):
-    name = models.CharField(max_length=48)
+    name = models.CharField(max_length=48, unique=True)
 
     class Meta:
         verbose_name = 'Category'
@@ -25,10 +25,8 @@ class Category(TimeStampedModel):
 
 
 class Donation(TimeStampedModel):
-    title = models.CharField(max_length=150)
-    category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name='donations'
-    )
+    title = models.CharField(max_length=150, unique=True)
+    categories = models.ManyToManyField(Category, related_name='donations')
     amount = models.DecimalField(
         max_digits=10, decimal_places=2, default=Decimal('0.00')
     )
