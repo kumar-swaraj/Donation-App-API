@@ -1,17 +1,14 @@
 services:
   db:
     image: postgres:18.1-alpine3.22
+    env_file:
+      - .env.development
     environment:
-      POSTGRES_DB: devdb
-      POSTGRES_USER: devuser
-      POSTGRES_PASSWORD: supersecretpassword
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - dev-db-data:/var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U devuser -d devdb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   app:
     build:
@@ -24,17 +21,10 @@ services:
       - ./config:/app/config:delegated
       - ./accounts:/app/accounts:delegated
       - ./donations:/app/donations:delegated
+      - ./payments:/app/payments:delegated
       - dev-media-data:/app/media
-    environment:
-      DB_HOST: db
-      DB_NAME: devdb
-      DB_USER: devuser
-      DB_PASSWORD: supersecretpassword
-      DEBUG: "1"
-      RUN_MIGRATIONS: "false"
-    depends_on:
-      db:
-        condition: service_healthy
+    env_file:
+      - .env.development
 
 volumes:
   dev-db-data:
