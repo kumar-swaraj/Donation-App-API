@@ -11,22 +11,20 @@ RUN pip install --no-cache-dir "poetry==$POETRY_VERSION"
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock* ./
-
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
-
-COPY . .
 
 RUN addgroup --system django \
   && adduser --system \
   --no-create-home \
   --disabled-password \
   --ingroup django \
-  django-user \
-  && chown -R django-user:django /app \
+  django-user
+
+COPY . .
+
+RUN chown -R django-user:django /app \
   && chmod +x /app/entrypoint.sh
 
-EXPOSE 8000
-
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]

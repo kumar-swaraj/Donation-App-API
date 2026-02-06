@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:18.1-alpine3.22
     env_file:
-      - .env.development
+      - .env.dev
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -24,7 +24,9 @@ services:
       - ./payments:/app/payments:delegated
       - dev-media-data:/app/media
     env_file:
-      - .env.development
+      - .env.dev
+    depends_on:
+      - db
 
 volumes:
   dev-db-data:
