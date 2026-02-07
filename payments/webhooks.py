@@ -1,9 +1,40 @@
+import logging
+
 import stripe
 from django.conf import settings
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from payments.models import DonationPayment
+from payments.models import DonationPayment, StripeEvent
+
+logger = logging.getLogger(__name__)
+
+
+def _extract_payment_intent_id(obj):
+    """Extract payment_intent_id from Stripe event object."""
+    if obj.get('object') == 'payment_intent':
+        return obj.get('id')
+    elif obj.get('object') == 'charge':
+        return obj.get('payment_intent')
+    return None
+
+
+def _update_donation_payment_status(payment_intent_id, event_type):
+    """Update DonationPayment status based on event type."""
+    qs = DonationPayment.objects.filter(stripe_payment_intent_id=payment_intent_id)
+
+    if event_type == 'payment_intent.succeeded':
+        qs.exclude(status='succeeded').update(status='succeeded')
+    elif event_type == 'payment_intent.payment_failed':
+        qs.exclude(status='failed').update(status='failed')
+    elif event_type == 'payment_intent.processing':
+        qs.exclude(status='processing').update(status='processing')
+    elif event_type == 'charge.refunded':
+        qs.exclude(status='refunded').update(status='refunded')
+    else:
+        return False
+    return True
 
 
 @csrf_exempt
@@ -23,32 +54,42 @@ def stripe_webhook(request):
     except (ValueError, stripe.error.SignatureVerificationError):
         return HttpResponse(status=400)
 
+    event_id = event['id']
     event_type = event['type']
-    intent = event['data']['object']
+    obj = event['data']['object']
 
-    payment_intent_id = intent.get('id')
+    # Resolve PaymentIntent ID safely
+    payment_intent_id = _extract_payment_intent_id(obj)
 
-    if not payment_intent_id:
+    # -------------------------
+    # Idempotency guard
+    # -------------------------
+    try:
+        with transaction.atomic():
+            StripeEvent.objects.create(
+                event_id=event_id,
+                event_type=event_type,
+                payment_intent_id=payment_intent_id,
+            )
+    except IntegrityError:
+        # Event already processed → idempotent success
         return HttpResponse(status=200)
 
-    if event_type == 'payment_intent.succeeded':
-        DonationPayment.objects.filter(
-            stripe_payment_intent_id=payment_intent_id
-        ).exclude(status='succeeded').update(status='succeeded')
+    # -------------------------
+    # Apply state transition
+    # -------------------------
+    if not payment_intent_id:
+        logger.warning(
+            'Stripe event without payment_intent',
+            extra={'event_id': event_id, 'event_type': event_type},
+        )
+        return HttpResponse(status=200)
 
-    elif event_type == 'payment_intent.payment_failed':
-        DonationPayment.objects.filter(
-            stripe_payment_intent_id=payment_intent_id
-        ).exclude(status='failed').update(status='failed')
-
-    elif event_type == 'payment_intent.processing':
-        DonationPayment.objects.filter(
-            stripe_payment_intent_id=payment_intent_id
-        ).exclude(status='processing').update(status='processing')
-
-    elif event_type == 'charge.refunded':
-        DonationPayment.objects.filter(
-            stripe_payment_intent_id=payment_intent_id
-        ).exclude(status='refunded').update(status='refunded')
+    with transaction.atomic():
+        if not _update_donation_payment_status(payment_intent_id, event_type):
+            logger.info(
+                'Unhandled Stripe event',
+                extra={'event_id': event_id, 'event_type': event_type},
+            )
 
     return HttpResponse(status=200)

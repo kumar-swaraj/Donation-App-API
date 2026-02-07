@@ -388,33 +388,33 @@ Access the Django admin panel at: **http://localhost:8000/admin/**
 ### Health Check
 
 ```
-GET /healthz/ - Application health status
+GET /healthz/                                          - Application health status
 ```
 
 ### Donations
 
 ```
-GET    /api/v1/categories/                      - List categories with donations
-GET    /api/v1/donations/{id}/                  - Retrieve donation
+GET    /api/v1/categories/                             - List categories with donations
+GET    /api/v1/donations/{id}/                         - Retrieve donation
 ```
 
 ### Accounts
 
 ```
-POST   /api/v1/accounts/auth/register/          - User registration
-POST   /api/v1/accounts/auth/login/             - User login
-POST   /api/v1/accounts/auth/refresh/           - Refresh Token
-POST   /api/v1/accounts/auth/logout/            - User logout
-GET    /api/v1/accounts/me/                     - Get user profile
+POST   /api/v1/accounts/auth/register/                 - User registration
+POST   /api/v1/accounts/auth/login/                    - User login
+POST   /api/v1/accounts/auth/refresh/                  - Refresh Token
+POST   /api/v1/accounts/auth/logout/                   - User logout
+GET    /api/v1/accounts/profile/                       - Get user profile
 ```
 
 ### Payments
 
 ```
-POST   /api/v1/payments/create-payment-intent/  - Create payment intent
-GET    /api/v1/payments/my-donations/           - List user payments
-GET    /api/v1/payments/stripe-publishable-key/ - Stripe publishable key
-POST   /api/v1/payments/webhook/                - Stripe webhook (internal)
+GET    /api/v1/payments/my-donations/                  - List user payments
+POST   /api/v1/payments/stripe/create-payment-intent/  - Create payment intent
+GET    /api/v1/payments/stripe/publishable-key/        - Stripe publishable key
+POST   /api/v1/payments/stripe/webhook/                - Stripe webhook (internal)
 ```
 
 ---

@@ -66,3 +66,18 @@ class DonationPayment(models.Model):
 
     def __str__(self):
         return f'{self.user or "Anonymous"} - {self.amount} {self.currency}'
+
+
+class StripeEvent(models.Model):
+    event_id = models.CharField(max_length=255, unique=True)
+    event_type = models.CharField(max_length=255)
+    payment_intent_id = models.CharField(max_length=255, blank=True, default='')
+    processed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Stripe Event'
+        verbose_name_plural = 'Stripe Events'
+        ordering = ['-processed_at']
+
+    def __str__(self):
+        return self.event_id

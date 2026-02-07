@@ -3,7 +3,7 @@ from django.db.utils import OperationalError
 from django.http import JsonResponse
 
 
-def healthz():
+def healthz(request):
     db_ok = True
     try:
         connections['default'].cursor()
