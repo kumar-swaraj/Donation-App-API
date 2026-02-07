@@ -22,6 +22,8 @@ This project provides comprehensive APIs for managing user accounts, donation ca
 
 ---
 
+<a id="tech-stack"></a>
+
 ## 🛠️ Tech Stack
 
 - **Language**: Python 3.14
@@ -34,57 +36,77 @@ This project provides comprehensive APIs for managing user accounts, donation ca
 - **Image Processing**: Pillow
 - **Authentication**: Django REST Framework SimpleJWT
 - **Dependency Management**: Poetry
+- **Cloudinary**: Cloudinary (via `django-cloudinary-storage`) — only enabled in production environments
 
 ---
+
+<a id="project-structure"></a>
 
 ## 📁 Project Structure
 
 ```
 donation-api/
-├── accounts/              # User account management
-│   ├── models.py         # User-related models
-│   ├── views.py          # Account endpoints
-│   ├── serializers.py    # Data serialization
-│   ├── urls.py           # URL routing
-│   └── migrations/       # Database migrations
+├── .env.dev              # Local env (not committed)
+├── .env.example          # Example env file
+├── .env.prod             # Production env (if used)
+├── Dockerfile            # Container configuration
+├── docker-compose.yml    # Local development setup
+├── entrypoint.sh         # Container entrypoint
+├── manage.py             # Django management script
+├── pyproject.toml        # Poetry dependency configuration
+├── poetry.lock           # Locked dependencies
+├── README.md             # This file
+├── LICENSE               # Project license
+├── accounts/             # User account management
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── views.py
+│   └── migrations/
 │
 ├── donations/            # Donation campaigns
-│   ├── models.py         # Donation & Category models
-│   ├── views.py          # Donation endpoints
-│   ├── serializers.py    # Data serialization
-│   ├── signals.py        # Django signals
-│   ├── urls.py           # URL routing
-│   └── migrations/       # Database migrations
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── signals.py
+│   ├── urls.py
+│   ├── views.py
+│   └── migrations/
 │
 ├── payments/             # Payment processing
-│   ├── models.py         # Payment models
-│   ├── views.py          # Payment endpoints
-│   ├── serializers.py    # Data serialization
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── resources.py      # API resource helpers
+│   ├── serializers.py
 │   ├── stripe_client.py  # Stripe integration
 │   ├── webhooks.py       # Stripe webhooks
-│   ├── urls.py           # URL routing
-│   └── migrations/       # Database migrations
+│   ├── urls.py
+│   ├── views.py
+│   └── migrations/
 │
 ├── config/               # Project configuration
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── health.py
 │   ├── settings.py       # Settings loader
-│   ├── settings/
-│   │   ├── base.py      # Base settings
-│   │   ├── dev.py       # Development settings
-│   │   └── prod.py      # Production settings
-│   ├── urls.py          # Root URL configuration
-│   ├── wsgi.py          # WSGI application
-│   ├── asgi.py          # ASGI application
-│   └── health.py        # Health check endpoint
-│
-├── Dockerfile           # Container configuration
-├── docker-compose.yml   # Local development setup
-├── entrypoint.sh        # Container entrypoint
-├── manage.py            # Django management script
-├── pyproject.toml       # Poetry dependency configuration
-└── README.md            # This file
+│   ├── settings/         # Django settings modules
+│   │   ├── base.py
+│   │   ├── dev.py
+│   │   └── prod.py
+│   ├── urls.py
+│   └── wsgi.py
 ```
 
 ---
+
+<a id="prerequisites"></a>
 
 ## 📋 Prerequisites
 
@@ -96,6 +118,8 @@ donation-api/
   - Poetry (for dependency management)
 
 ---
+
+<a id="installation--setup"></a>
 
 ## ⚙️ Installation & Setup
 
@@ -196,6 +220,8 @@ python manage.py runserver
 
 ---
 
+<a id="running-the-application"></a>
+
 ## 🚀 Running the Application
 
 ### Using Docker Compose
@@ -237,6 +263,8 @@ curl http://localhost:8000/healthz/
 
 ---
 
+<a id="environment-variables"></a>
+
 ## 🔐 Environment Variables
 
 Create a `.env.dev` file in the root directory with the following variables:
@@ -261,6 +289,15 @@ STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
+Note: The Cloudinary-related environment variables below are only required when running in production with `config.settings.prod` (Cloudinary-backed storage).
+
+```env
+# Cloudinary (production only)
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
 ### Key Variables Explained
 
 | Variable                 | Description                                            |
@@ -273,6 +310,8 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 | `STRIPE_SECRET_KEY`      | Your Stripe test/live secret key                       |
 
 ---
+
+<a id="database"></a>
 
 ## 📊 Database
 
@@ -309,6 +348,8 @@ python manage.py showmigrations
 
 ---
 
+<a id="payment-integration"></a>
+
 ## 💳 Payment Integration
 
 ### Stripe Setup
@@ -338,6 +379,8 @@ Use Stripe test cards:
 - **3D Secure**: 4000 0025 0000 3155
 
 ---
+
+<a id="development"></a>
 
 ## 🔨 Development
 
@@ -385,6 +428,8 @@ Access the Django admin panel at: **http://localhost:8000/admin/**
 
 ## 🌐 API Endpoints
 
+<a id="api-endpoints"></a>
+
 ### Health Check
 
 ```
@@ -418,6 +463,8 @@ POST   /api/v1/payments/stripe/webhook/                - Stripe webhook (interna
 ```
 
 ---
+
+<a id="deployment"></a>
 
 ## 📦 Deployment
 
@@ -458,7 +505,7 @@ ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License. See the `LICENSE` file in the repository root for full terms.
 
 ---
 
