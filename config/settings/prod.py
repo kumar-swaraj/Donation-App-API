@@ -1,9 +1,7 @@
 import os
-from pathlib import Path
 
 from .base import *  # noqa: F403
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+from .base import BASE_DIR, INSTALLED_APPS
 
 DEBUG = False
 
@@ -12,20 +10,22 @@ if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
     err = 'ALLOWED_HOSTS must be set in production'
     raise RuntimeError(err)
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-USE_X_FORWARDED_HOST = True
 
-CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS if host]
-
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-
+INSTALLED_APPS += [
+    'cloudinary_storage',
+    'cloudinary',
+]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STORAGES = {
+    'default': {
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ['CLOUDINARY_CLOUD_NAME'],
@@ -33,6 +33,14 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ['CLOUDINARY_API_SECRET'],
 }
 
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS if host]
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True

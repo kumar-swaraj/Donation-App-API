@@ -17,8 +17,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary_storage',
-    'cloudinary',
     'import_export',
     'rest_framework',
     'rest_framework_simplejwt',
@@ -93,10 +91,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
